@@ -79,7 +79,7 @@ def main(config: OmegaConf):
         wandb_dir.mkdir(exist_ok=True, parents=True)
         logger.info(f"Saving wandb logs to {wandb_dir}")
         wandb.init(project=project_name, 
-                entity=config.wandb.wandb_entity,
+                # entity=config.wandb.wandb_entity,
                 name=run_name,
                 sync_tensorboard=True,
                 config=unresolved_conf,

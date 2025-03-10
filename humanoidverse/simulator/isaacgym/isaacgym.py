@@ -147,11 +147,18 @@ class IsaacGym(BaseSimulator):
         logger.info('Created trimesh terrain')
 
     def load_assets(self):
-        asset_root = self.robot_config.asset.asset_root
-        asset_file = self.robot_config.asset.urdf_file
+        ### xinpeng modified for smpl robot #####
+        if self.robot_config.asset.robot_type in ['h1', 'g1']:
+            asset_root = self.robot_config.asset.asset_root
+            asset_file = self.robot_config.asset.urdf_file
+        elif self.robot_config.asset.robot_type in ['smpl']:
+            asset_root = self.robot_config.asset.asset_root
+            asset_file = self.robot_config.asset.xml_file
+        else:
+            raise ValueError(f"Robot type {self.robot_config.asset.robot_type} not supported")
+        ### xinpeng modified for smpl robot #####
         self.robot_asset = self._setup_robot_asset_when_env_created(asset_root, asset_file, self.robot_config.asset)
         self.num_dof, self.num_bodies, self.dof_names, self.body_names = self._setup_robot_props_when_env_created()
-        
         # assert if  aligns with config
         assert self.num_dof == len(self.robot_config.dof_names), "Number of DOFs must be equal to number of actions"
         assert self.num_bodies == len(self.robot_config.body_names), "Number of bodies must be equal to number of body names"
@@ -622,8 +629,8 @@ class IsaacGym(BaseSimulator):
             elif evt.action == "push_robots" and evt.value > 0:
                 logger.info("Push Robots")
                 self._push_robots(torch.arange(self.num_envs, device=self.device))
-            # elif evt.action == "next_task" and evt.value > 0:
-            #     self.next_task()
+            elif evt.action == "next_task" and evt.value > 0:
+                self.next_task()
             elif evt.action == "toggle_video_record" and evt.value > 0:
                 # https://github.com/NVlabs/ProtoMotions/blob/94059259ba2b596bf908828cc04e8fc6ff901114/phys_anim/envs/base_interface/isaacgym.py#L179
                 self.user_is_recording = not self.user_is_recording

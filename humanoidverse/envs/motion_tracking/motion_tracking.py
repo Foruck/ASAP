@@ -329,7 +329,7 @@ class LeggedRobotMotionTracking(LeggedRobotBase):
         else:
             ref_vr_3point_pos = self.teleop_marker_coords
         vr_2root_pos = (ref_vr_3point_pos - self.simulator.robot_root_states[:, 0:3].view(env_batch_size, 1, 3))
-        heading_inv_rot_vr = heading_inv_rot.repeat(3,1)
+        heading_inv_rot_vr = heading_inv_rot.repeat(len(self.motion_tracking_id), 1)
         self._obs_vr_3point_pos = my_quat_rotate(heading_inv_rot_vr.view(-1, 4), vr_2root_pos.view(-1, 3)).view(env_batch_size, -1)
         #################### Deepmimic phase ###################### 
 
